@@ -1,0 +1,19 @@
+{
+  "name": "gh-pr",
+  "version": "1.0.0",
+  "description": "Make a PR on github",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuanCaicedo/gh-pr.git"
+  },
+  "author": "Juan Caicedo <retiredcanadianpoet@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JuanCaicedo/gh-pr/issues"
+  },
+  "homepage": "https://github.com/JuanCaicedo/gh-pr#readme"
+}
