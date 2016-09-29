@@ -29,8 +29,19 @@ function parseUserAndRepoName(program) {
   const user = split[0];
   const repoName = split[1];
 
+  if(!user) {
+    console.error('Please provide a username');
+    process.exit(1);
+  }
+
+  if(!repoName) {
+    console.error('Please provide a full repo name');
+    process.exit(1);
+  }
+
   program.user = user;
   program.repoName = repoName;
+
   return program;
 }
 
