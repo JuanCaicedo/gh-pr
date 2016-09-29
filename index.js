@@ -6,7 +6,7 @@ const inquirer = require('inquirer');
 
 function getCommandLineInputs(args) {
   return commander
-    .option('-r, --repo <mine>', 'A github repository')
+    .option('-r, --repo <user/repo-name>', 'A github repository')
     .parse(args);
 }
 
@@ -49,13 +49,21 @@ function getTitles(issues) {
 function sendToStdOut(issues) {
   issues.forEach(issue => console.log(issue));
 }
+
+function handleErrors(error) {
+  console.error('Something went wrong!');
+  console.error('Please let us know and send us this message:');
+  console.error(error.stack);
+}
+
 function main() {
   Promise.resolve(getCommandLineInputs(process.argv))
     .then(getRepoIfMissing)
     .then(parseUserAndRepoName)
     .then(getIssues)
     .then(getTitles)
-    .then(sendToStdOut);
+    .then(sendToStdOut)
+    .catch(handleErrors);
 }
 
 if (require.main === module) {
