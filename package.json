@@ -18,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/JuanCaicedo/gh-pr/issues"
   },
-  "homepage": "https://github.com/JuanCaicedo/gh-pr#readme"
+  "homepage": "https://github.com/JuanCaicedo/gh-pr#readme",
+  "dependencies": {
+    "commander": "2.9.0",
+    "github": "3.1.1"
+  }
 }
