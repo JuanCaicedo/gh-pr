@@ -46,13 +46,16 @@ function getTitles(issues) {
   return issues.map(issue => issue.title);
 }
 
+function sendToStdOut(issues) {
+  issues.forEach(issue => console.log(issue));
+}
 function main() {
   Promise.resolve(getCommandLineInputs(process.argv))
     .then(getRepoIfMissing)
     .then(parseUserAndRepoName)
     .then(getIssues)
     .then(getTitles)
-    .then(console.log);
+    .then(sendToStdOut);
 }
 
 if (require.main === module) {
