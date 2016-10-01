@@ -1,8 +1,10 @@
 #! /usr/bin/env node
+'use strict';
 
 const GitHubApi = require('github');
 const commander = require('commander');
 const inquirer = require('inquirer');
+const readline = require('readline');
 
 function getCommandLineInputs(args) {
   return commander
@@ -67,14 +69,31 @@ function handleErrors(error) {
   console.error(error.stack);
 }
 
-function main() {
-  Promise.resolve(getCommandLineInputs(process.argv))
+function getIssuesFromArgs(args) {
+  return Promise.resolve(getCommandLineInputs())
     .then(getRepoIfMissing)
     .then(parseUserAndRepoName)
     .then(getIssues)
     .then(getTitles)
     .then(sendToStdOut)
     .catch(handleErrors);
+}
+
+function getIssuesFromStdIn(stdin) {
+  const rl = readline.createInterface({
+    input: process.stdin
+  });
+  rl.on('line', (line) => console.log(line));
+}
+
+function main() {
+  let issues;
+  if(process.stdin.isTTY) {
+    issues = getIssuesFromArgs(process.argv);
+  } else {
+    issues = getIssuesFromStdIn(process.stdin);
+  }
+  issues
 }
 
 if (require.main === module) {
