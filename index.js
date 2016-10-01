@@ -13,17 +13,18 @@ function getCommandLineInputs(args) {
 }
 
 function getRepoIfMissing(program) {
-  if (!program.repo) {
+  let repo = program.repo;
+  if (!repo) {
     return inquirer.prompt([{
         name: 'repo',
         message: 'What repo are you interested in?'
       }])
       .then(function(answers) {
-        program.repo = answers.repo;
-        return program;
+        repo = answers.repo;
+        return repo;
       });
   };
-  return program;
+  return repo;
 }
 
 function parseUserAndRepoName(program) {
@@ -60,7 +61,7 @@ function getTitles(issues) {
 }
 
 function sendToStdOut(issues) {
-  issues.forEach(issue => console.log(issue));
+  return issues.forEach(issue => console.log(issue));
 }
 
 function handleErrors(error) {
@@ -69,12 +70,17 @@ function handleErrors(error) {
   console.error(error.stack);
 }
 
-function getIssuesFromArgs(args) {
-  return Promise.resolve(getCommandLineInputs())
-    .then(getRepoIfMissing)
+function getIssuesFromRepo(repo) {
+  return Promise.resolve({repo})
     .then(parseUserAndRepoName)
     .then(getIssues)
-    .then(getTitles)
+    .then(getTitles);
+}
+
+function getIssuesFromArgs(args) {
+  return Promise.resolve(getCommandLineInputs(args))
+    .then(getRepoIfMissing)
+    .then(getIssuesFromRepo)
     .then(sendToStdOut)
     .catch(handleErrors);
 }
@@ -83,17 +89,26 @@ function getIssuesFromStdIn(stdin) {
   const rl = readline.createInterface({
     input: process.stdin
   });
-  rl.on('line', (line) => console.log(line));
+
+  const promises = [];
+  rl.on('line', function(line) {
+    const linePromise = getIssuesFromRepo(line).then(sendToStdOut);
+    promises.push(linePromise);
+  });
+
+  rl.on('close', function() {
+    Promise.all(promises)
+      .then(x => process.exit(0))
+      .catch(handleErrors);
+  });
 }
 
 function main() {
-  let issues;
   if(process.stdin.isTTY) {
-    issues = getIssuesFromArgs(process.argv);
+    getIssuesFromArgs(process.argv);
   } else {
-    issues = getIssuesFromStdIn(process.stdin);
+    getIssuesFromStdIn(process.stdin);
   }
-  issues
 }
 
 if (require.main === module) {
